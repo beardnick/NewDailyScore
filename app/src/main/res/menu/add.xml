@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="add"
+        android:orderInCategory="20"
+        android:id="@+id/action_add"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_add_black_24dp"
+        />
+
+    <!--<item-->
+    <!--android:title="remove"-->
+    <!--android:orderInCategory="30"-->
+    <!--android:id="@+id/action_remove"-->
+    <!--app:showAsAction="always"-->
+    <!--android:icon="@drawable/ic_remove_blue_grey_200_24dp"-->
+    <!--/>-->
+
+</menu>
