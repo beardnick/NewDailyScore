@@ -51,8 +51,6 @@ public class HistoryScore extends AppCompatActivity {
                intent.getStringExtra("name")).find(Hobby.class);
         hobby = hobbyList.get(0);
         beginDate = Calendar.getInstance();
-
-            String name = hobby.getName();
             beginDate = hobby.getBeginCalendar();
             todayDate = Calendar.getInstance();
     }

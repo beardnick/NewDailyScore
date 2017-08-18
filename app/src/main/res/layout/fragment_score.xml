@@ -5,11 +5,13 @@
              tools:context="layout.ScoreFragment"
     android:id="@+id/score_fragment">
 
-    <TextView
-        android:id="@+id/textView"
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/score_chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="score"/>
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_height="300dp" />
+
 
 </FrameLayout>

@@ -73,7 +73,7 @@ public class HobbyAdapter extends RecyclerView.Adapter<HobbyAdapter.ViewHolder> 
                 int position = viewholder.getAdapterPosition();
                 Hobby hobby = mHobbyList.get(position);
                 hobby.setIsFinish();
-                hobby.save();
+                if(hobby.isSaved())hobby.save();
                 if(hobby.getIsFinish()){
                     if(hobby.getPerScore() > 0){
                         viewholder.finish.setImageResource(R.drawable.ic_wb_sunny_amber_700_24dp);

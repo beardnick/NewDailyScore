@@ -25,6 +25,9 @@ public class HobbyHelper extends DataSupport {
         this.perScore = perScore;
         Calendar calendar = Calendar.getInstance();
         date = format.format(calendar.getTime());
+    }
+
+    public void setDefault(){
         score = 0;
         isFinish = false;
     }
@@ -35,7 +38,6 @@ public class HobbyHelper extends DataSupport {
 
     public void setHobbyName(String hobbyName) {
         this.hobbyName = hobbyName;
-        save();
     }
 
     public String getDate() {
@@ -44,7 +46,6 @@ public class HobbyHelper extends DataSupport {
 
     public void setDate(String date) {
         this.date = date;
-        save();
     }
 
     public int getScore() {
@@ -52,8 +53,12 @@ public class HobbyHelper extends DataSupport {
     }
 
     private void setScore(int score) {
-        this.score = score;
-        save();
+     if(isFinish == false && score == 0){
+         this.score = 0;
+     }
+     else {
+         this.score = score;
+     }
     }
 
     public boolean isFinish() {
@@ -64,11 +69,5 @@ public class HobbyHelper extends DataSupport {
         isFinish = finish;
         if(finish)setScore(perScore);
         else  setScore(0);
-        save();
-    }
-
-    HobbyHelper getHobbyHelper(String name,String date){
-        List<HobbyHelper>  list = where("name == ?",name).where("date == ?",date).find(HobbyHelper.class);
-        return list.get(0);
     }
 }

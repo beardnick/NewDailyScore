@@ -29,5 +29,6 @@ dependencies {
     compile 'org.litepal.android:core:1.6.0'
     compile 'com.aurelhubert:ahbottomnavigation:2.0.6'
     compile 'com.prolificinteractive:material-calendarview:1.4.3'
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     testCompile 'junit:junit:4.12'
 }

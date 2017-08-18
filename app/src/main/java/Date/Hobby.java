@@ -21,19 +21,20 @@ public class Hobby extends DataSupport {
     private Calendar beginCalendar;
     private int totalScore;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.CHINA);
-    private boolean isFinish;
-    private int score;
+    private Calendar todayCalendar;
+    private int todayScore;
+    private boolean todayIsFinish;
 
     public Hobby(String name,int perScore){
         this.name = name;
         this.perScore = perScore;
         this.beginCalendar = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
+        this.todayCalendar = Calendar.getInstance();
+        todayIsFinish = false;
         totalScore = 0;
-        isFinish = false;
-        score = 0;
         HobbyHelper helper = new HobbyHelper(name,perScore);
-        helper.save();
+        helper.setDefault();
+        if(name != null)helper.save();
     }
 
 
@@ -47,7 +48,7 @@ public class Hobby extends DataSupport {
 
     public void setName(String name) {
         if(name != null)
-        this.name = name;
+            this.name = name;
     }
 
     public int getPerScore() {
@@ -72,49 +73,121 @@ public class Hobby extends DataSupport {
     }
 
     public boolean getIsFinish(){
-        return isFinish;
+        Calendar calendar = Calendar.getInstance();
+        if(getStringClendar(todayCalendar).equals(getStringClendar(calendar)))return getTodayIsFinish();
+        else {
+            setYesterdayHelper(name,todayCalendar);
+            todayCalendar = calendar;
+            HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+            helper.setDefault();
+            todayScore = helper.getScore();
+            todayIsFinish = helper.isFinish();
+            helper.save();
+            return helper.isFinish();
+        }
+    }
+
+    private void setYesterdayHelper(String name,Calendar calendar){
+        HobbyHelper helper;
+        helper = getHobbyHelper(name,getStringClendar(calendar));
+        helper.setFinish(todayIsFinish);
+        if(helper.isSaved())helper.save();
+    }
+
+    boolean getTodayIsFinish(){
+        return todayIsFinish;
     }
 
     public boolean getIsFinish(Calendar calendar){
-        String temp = getStringClendar(calendar);
-        HobbyHelper helper = getHobbyHelper(name,temp);
-        return helper.isFinish();
+        if(inTheTimeZone(calendar)){
+            if(getStringClendar(todayCalendar).equals(getStringClendar(calendar)))return getTodayIsFinish();
+            else {
+                HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+                return helper.isFinish();
+            }
+        }
+        else
+            return false;
     }
-
     public void setIsFinish(Calendar calendar){
-        String temp = getStringClendar(calendar);
-        HobbyHelper helper = getHobbyHelper(name,temp);
-        helper.setFinish(!helper.isFinish());
-        setTotalScore(helper.isFinish());
-        setScore(helper.getScore());
+        if(inTheTimeZone(calendar)){
+            HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+            helper.setFinish(!helper.isFinish());
+            if(helper.isSaved())helper.save();
+            setTotalScore(helper.isFinish());
+        }
     }
 
     public  void setIsFinish(){
         Calendar calendar = Calendar.getInstance();
-        isFinish = ! isFinish;
-        HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
-        helper.setFinish(isFinish);
-        setTotalScore(isFinish);
-        setScore(helper.getScore());
+        if(getStringClendar(todayCalendar).equals(getStringClendar(calendar))){
+            todayIsFinish = ! todayIsFinish;
+            if(todayIsFinish)todayScore = perScore;
+            else todayScore = 0;
+            setTotalScore(todayIsFinish);
+        }
+        else {
+            boolean isFinish = !getIsFinish();
+            HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+            helper.setFinish(isFinish);
+            if(helper.isSaved())helper.save();
+            setTotalScore(isFinish);
+        }
     }
 
 
     public int getScore(){
-        return score;
+        Calendar calendar = Calendar.getInstance();
+        if(getStringClendar(todayCalendar).equals(getStringClendar(calendar)))return getTodayScore();
+        else {
+            setYesterdayHelper(name,todayCalendar);
+            todayCalendar = calendar;
+            HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+            helper.setDefault();
+            todayScore = helper.getScore();
+            todayIsFinish = helper.isFinish();
+            helper.save();
+            return helper.getScore();
+        }
+    }
+
+    private int getTodayScore(){
+        return todayScore;
     }
 
     public int getScore(Calendar calendar){
-        String temp = getStringClendar(calendar);
-        HobbyHelper helper = getHobbyHelper(name,temp);
-        return helper.getScore();
+        if(inTheTimeZone(calendar)){
+                String test = getStringClendar(todayCalendar);
+            String test1 = getStringClendar(calendar);
+            if(getStringClendar(todayCalendar).equals(getStringClendar(calendar )))return getTodayScore();
+            else {
+                HobbyHelper helper = getHobbyHelper(name,getStringClendar(calendar));
+                return helper.getScore();
+            }
+        }
+        else return 0;
     }
 
-    private void setScore(int score){
-        this.score = score;
-    }
 
     HobbyHelper getHobbyHelper(String name,String date){
-        List<HobbyHelper> list = where("name == ?",name).where("date == ?",date).find(HobbyHelper.class);
-        return list.get(0);
+        HobbyHelper helper = new HobbyHelper(name,perScore);
+        List<HobbyHelper> list = where("hobbyName like ? and Date like ?",
+                "%"+name+"%","%"+date+"%").find(HobbyHelper.class);
+        for(HobbyHelper helper1:list){
+            String test1 = helper1.getHobbyName();
+            String test2 = helper1.getDate();
+            int test3 = helper1.getScore();
+            int test4 = test3;
+        }
+        if(list.size() == 0){
+            helper.setDefault();
+            return helper;
+        } else
+            return list.get(0);
+    }
+
+    public boolean inTheTimeZone(Calendar calendar){
+        return calendar.getTimeInMillis() > beginCalendar.getTimeInMillis() - 86400000
+                && calendar.getTimeInMillis() < System.currentTimeMillis() + 86400000;
     }
 }

@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements AHBottomNavigatio
     }
 
     private void replace(Fragment fragment) {
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction mTransaction = manager.beginTransaction();
-            mTransaction.replace(R.id.fragment,fragment);
-            mTransaction.commit();
+           FragmentManager manager = getSupportFragmentManager();
+           FragmentTransaction transaction = manager.beginTransaction();
+           transaction.replace(R.id.fragment,fragment);
+           transaction.commit();
     }
 
     @Override
